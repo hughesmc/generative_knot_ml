@@ -3,20 +3,30 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[         0,          0]
-NotebookDataLength[     52101,       1248]
-NotebookOptionsPosition[     51264,       1220]
-NotebookOutlinePosition[     51632,       1236]
-CellTagsIndexPosition[     51589,       1233]
+NotebookDataLength[     53441,       1270]
+NotebookOptionsPosition[     52519,       1241]
+NotebookOutlinePosition[     52886,       1257]
+CellTagsIndexPosition[     52843,       1254]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
 
 Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{"<<", "KnotTheory`"}]], "Input",
+ CellLabel->"In[1]:=",ExpressionUUID->"8329f3ee-e492-43e2-9659-14304a29f911"],
+
+Cell[BoxData["\<\"Loading KnotTheory` version of September 6, 2014, \
+13:37:37.2841.\\nRead more at http://katlas.org/wiki/KnotTheory.\"\>"], \
+"Print",
+ CellChangeTimes->{3.822056063832604*^9},
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"cb45928e-2ce6-40d4-9211-021ec6f3b1b0"]
+}, Open  ]],
+
 Cell[BoxData[{
- RowBox[{
-  RowBox[{"<<", "KnotTheory`"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{
@@ -986,7 +996,9 @@ Cell[BoxData[{
   "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{"insertActualInvariants", "[", "fileName_", "]"}], ":=", 
+   RowBox[{"insertActualInvariants", "[", 
+    RowBox[{"fileName_", ",", 
+     RowBox[{"maxPDLength_:", "60"}]}], "]"}], ":=", 
    RowBox[{"Module", "[", 
     RowBox[{
      RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", 
@@ -1015,115 +1027,127 @@ Cell[BoxData[{
           RowBox[{"permutationToPD", "[", 
            RowBox[{"petalPermutation", "[", "iii", "]"}], "]"}]}], ";", 
          "\[IndentingNewLine]", 
-         RowBox[{
-          RowBox[{"jonesPolynomial", "[", "iii", "]"}], "=", 
-          RowBox[{"Sort", "[", 
-           RowBox[{
-            RowBox[{"coeffPairs", "[", 
-             RowBox[{
-              RowBox[{
-               RowBox[{"Jones", "[", 
-                RowBox[{"PD", "@@", 
-                 RowBox[{"(", 
-                  RowBox[{"X", "@@@", 
-                   RowBox[{"PDCode", "[", "iii", "]"}]}], ")"}]}], "]"}], "[",
-                "q", "]"}], ",", "q"}], "]"}], ",", 
-            RowBox[{
-             RowBox[{
-              RowBox[{"#1", "[", 
-               RowBox[{"[", "1", "]"}], "]"}], "<", 
-              RowBox[{"#2", "[", 
-               RowBox[{"[", "1", "]"}], "]"}]}], "&"}]}], "]"}]}], ";", 
-         RowBox[{
-          RowBox[{"jonesSpan", "[", "iii", "]"}], "=", 
+         RowBox[{"If", "[", "\[IndentingNewLine]", 
           RowBox[{
            RowBox[{
-            RowBox[{"jonesPolynomial", "[", "iii", "]"}], "[", 
-            RowBox[{"[", 
-             RowBox[{
-              RowBox[{"-", "1"}], ",", "1"}], "]"}], "]"}], "-", 
+            RowBox[{"Length", "[", 
+             RowBox[{"PDCode", "[", "iii", "]"}], "]"}], "\[LessEqual]", 
+            "maxPDLength"}], ",", "\[IndentingNewLine]", 
            RowBox[{
-            RowBox[{"jonesPolynomial", "[", "iii", "]"}], "[", 
-            RowBox[{"[", 
-             RowBox[{"1", ",", "1"}], "]"}], "]"}]}]}], ";", 
-         RowBox[{
-          RowBox[{"jonesString", "[", "iii", "]"}], "=", 
-          RowBox[{"StringReplace", "[", 
-           RowBox[{
-            RowBox[{"ToString", "[", 
-             RowBox[{"jonesPolynomial", "[", "iii", "]"}], "]"}], ",", 
-            RowBox[{"{", 
-             RowBox[{
-              RowBox[{"\"\<{\>\"", "\[Rule]", "\"\<[\>\""}], ",", 
-              RowBox[{"\"\<}\>\"", "\[Rule]", "\"\<]\>\""}]}], "}"}]}], 
-           "]"}]}], ";", 
-         RowBox[{
-          RowBox[{"alexanderPolynomial", "[", "iii", "]"}], "=", 
-          RowBox[{"Sort", "[", 
-           RowBox[{
-            RowBox[{"coeffPairs", "[", 
+            RowBox[{
+             RowBox[{"jonesPolynomial", "[", "iii", "]"}], "=", 
+             RowBox[{"Sort", "[", 
+              RowBox[{
+               RowBox[{"coeffPairs", "[", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Jones", "[", 
+                   RowBox[{"PD", "@@", 
+                    RowBox[{"(", 
+                    RowBox[{"X", "@@@", 
+                    RowBox[{"PDCode", "[", "iii", "]"}]}], ")"}]}], "]"}], 
+                  "[", "q", "]"}], ",", "q"}], "]"}], ",", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"#1", "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], "<", 
+                 RowBox[{"#2", "[", 
+                  RowBox[{"[", "1", "]"}], "]"}]}], "&"}]}], "]"}]}], ";", 
+            RowBox[{
+             RowBox[{"jonesSpan", "[", "iii", "]"}], "=", 
              RowBox[{
               RowBox[{
-               RowBox[{"Alexander", "[", 
-                RowBox[{"PD", "@@", 
-                 RowBox[{"(", 
-                  RowBox[{"X", "@@@", 
-                   RowBox[{"PDCode", "[", "iii", "]"}]}], ")"}]}], "]"}], "[",
-                "q", "]"}], ",", "q"}], "]"}], ",", 
+               RowBox[{"jonesPolynomial", "[", "iii", "]"}], "[", 
+               RowBox[{"[", 
+                RowBox[{
+                 RowBox[{"-", "1"}], ",", "1"}], "]"}], "]"}], "-", 
+              RowBox[{
+               RowBox[{"jonesPolynomial", "[", "iii", "]"}], "[", 
+               RowBox[{"[", 
+                RowBox[{"1", ",", "1"}], "]"}], "]"}]}]}], ";", 
             RowBox[{
+             RowBox[{"jonesString", "[", "iii", "]"}], "=", 
+             RowBox[{"StringReplace", "[", 
+              RowBox[{
+               RowBox[{"ToString", "[", 
+                RowBox[{"jonesPolynomial", "[", "iii", "]"}], "]"}], ",", 
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"\"\<{\>\"", "\[Rule]", "\"\<[\>\""}], ",", 
+                 RowBox[{"\"\<}\>\"", "\[Rule]", "\"\<]\>\""}]}], "}"}]}], 
+              "]"}]}], ";", 
+            RowBox[{
+             RowBox[{"alexanderPolynomial", "[", "iii", "]"}], "=", 
+             RowBox[{"Sort", "[", 
+              RowBox[{
+               RowBox[{"coeffPairs", "[", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Alexander", "[", 
+                   RowBox[{"PD", "@@", 
+                    RowBox[{"(", 
+                    RowBox[{"X", "@@@", 
+                    RowBox[{"PDCode", "[", "iii", "]"}]}], ")"}]}], "]"}], 
+                  "[", "q", "]"}], ",", "q"}], "]"}], ",", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"#1", "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], "<", 
+                 RowBox[{"#2", "[", 
+                  RowBox[{"[", "1", "]"}], "]"}]}], "&"}]}], "]"}]}], ";", 
+            RowBox[{
+             RowBox[{"alexanderSpan", "[", "iii", "]"}], "=", 
              RowBox[{
-              RowBox[{"#1", "[", 
-               RowBox[{"[", "1", "]"}], "]"}], "<", 
-              RowBox[{"#2", "[", 
-               RowBox[{"[", "1", "]"}], "]"}]}], "&"}]}], "]"}]}], ";", 
-         RowBox[{
-          RowBox[{"alexanderSpan", "[", "iii", "]"}], "=", 
-          RowBox[{
+              RowBox[{
+               RowBox[{"alexanderPolynomial", "[", "iii", "]"}], "[", 
+               RowBox[{"[", 
+                RowBox[{
+                 RowBox[{"-", "1"}], ",", "1"}], "]"}], "]"}], "-", 
+              RowBox[{
+               RowBox[{"alexanderPolynomial", "[", "iii", "]"}], "[", 
+               RowBox[{"[", 
+                RowBox[{"1", ",", "1"}], "]"}], "]"}]}]}], ";", 
+            RowBox[{
+             RowBox[{"alexanderString", "[", "iii", "]"}], "=", 
+             RowBox[{"StringReplace", "[", 
+              RowBox[{
+               RowBox[{"ToString", "[", 
+                RowBox[{"alexanderPolynomial", "[", "iii", "]"}], "]"}], ",", 
+               
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"\"\<{\>\"", "\[Rule]", "\"\<[\>\""}], ",", 
+                 RowBox[{"\"\<}\>\"", "\[Rule]", "\"\<]\>\""}]}], "}"}]}], 
+              "]"}]}], ";", 
+            RowBox[{
+             RowBox[{"signature", "[", "iii", "]"}], "=", 
+             RowBox[{"KnotSignature", "[", 
+              RowBox[{"PD", "@@", 
+               RowBox[{"(", 
+                RowBox[{"X", "@@@", 
+                 RowBox[{"PDCode", "[", "iii", "]"}]}], ")"}]}], "]"}]}], ";", 
+            RowBox[{
+             RowBox[{"determinant", "[", "iii", "]"}], "=", 
+             RowBox[{"KnotDet", "[", 
+              RowBox[{"PD", "@@", 
+               RowBox[{"(", 
+                RowBox[{"X", "@@@", 
+                 RowBox[{"PDCode", "[", "iii", "]"}]}], ")"}]}], "]"}]}], ";", 
+            RowBox[{
+             RowBox[{"actualInvariants", "[", "iii", "]"}], "=", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"jonesSpan", "[", "iii", "]"}], ",", 
+               RowBox[{"alexanderSpan", "[", "iii", "]"}], ",", 
+               RowBox[{"signature", "[", "iii", "]"}], ",", 
+               RowBox[{"determinant", "[", "iii", "]"}], ",", 
+               RowBox[{"jonesPolynomial", "[", "iii", "]"}], ",", 
+               RowBox[{"alexanderPolynomial", "[", "iii", "]"}]}], "}"}]}]}], 
+           ",", "\[IndentingNewLine]", 
            RowBox[{
-            RowBox[{"alexanderPolynomial", "[", "iii", "]"}], "[", 
-            RowBox[{"[", 
-             RowBox[{
-              RowBox[{"-", "1"}], ",", "1"}], "]"}], "]"}], "-", 
-           RowBox[{
-            RowBox[{"alexanderPolynomial", "[", "iii", "]"}], "[", 
-            RowBox[{"[", 
-             RowBox[{"1", ",", "1"}], "]"}], "]"}]}]}], ";", 
-         RowBox[{
-          RowBox[{"alexanderString", "[", "iii", "]"}], "=", 
-          RowBox[{"StringReplace", "[", 
-           RowBox[{
-            RowBox[{"ToString", "[", 
-             RowBox[{"alexanderPolynomial", "[", "iii", "]"}], "]"}], ",", 
-            RowBox[{"{", 
-             RowBox[{
-              RowBox[{"\"\<{\>\"", "\[Rule]", "\"\<[\>\""}], ",", 
-              RowBox[{"\"\<}\>\"", "\[Rule]", "\"\<]\>\""}]}], "}"}]}], 
-           "]"}]}], ";", 
-         RowBox[{
-          RowBox[{"signature", "[", "iii", "]"}], "=", 
-          RowBox[{"KnotSignature", "[", 
-           RowBox[{"PD", "@@", 
-            RowBox[{"(", 
-             RowBox[{"X", "@@@", 
-              RowBox[{"PDCode", "[", "iii", "]"}]}], ")"}]}], "]"}]}], ";", 
-         RowBox[{
-          RowBox[{"determinant", "[", "iii", "]"}], "=", 
-          RowBox[{"KnotDet", "[", 
-           RowBox[{"PD", "@@", 
-            RowBox[{"(", 
-             RowBox[{"X", "@@@", 
-              RowBox[{"PDCode", "[", "iii", "]"}]}], ")"}]}], "]"}]}], ";", 
-         RowBox[{
-          RowBox[{"actualInvariants", "[", "iii", "]"}], "=", 
-          RowBox[{"{", 
-           RowBox[{
-            RowBox[{"jonesSpan", "[", "iii", "]"}], ",", 
-            RowBox[{"alexanderSpan", "[", "iii", "]"}], ",", 
-            RowBox[{"signature", "[", "iii", "]"}], ",", 
-            RowBox[{"determinant", "[", "iii", "]"}], ",", 
-            RowBox[{"jonesPolynomial", "[", "iii", "]"}], ",", 
-            RowBox[{"alexanderPolynomial", "[", "iii", "]"}]}], "}"}]}], ";", 
-         "\[IndentingNewLine]", 
+            RowBox[{"actualInvariants", "[", "iii", "]"}], "=", 
+            RowBox[{"{", "\"\<PD Code longer than maximum\>\"", "}"}]}]}], 
+          "]"}], ";", "\[IndentingNewLine]", 
          RowBox[{"AppendTo", "[", 
           RowBox[{
            RowBox[{"file", "[", 
@@ -1176,23 +1200,17 @@ Cell[BoxData[{
    3.813592652270286*^9, 3.8135926970840816`*^9}, {3.8135927424515047`*^9, 
    3.813592755247118*^9}, {3.813592851513096*^9, 3.8135928581166477`*^9}, {
    3.8139478011735573`*^9, 3.8139478102513103`*^9}, {3.8139480153428497`*^9, 
-   3.81394802119772*^9}, 
-   3.813950994395143*^9},ExpressionUUID->"8fdccece-db1d-4189-abfd-\
+   3.81394802119772*^9}, 3.813950994395143*^9, {3.822055579581052*^9, 
+   3.822055585552408*^9}, {3.822055679503083*^9, 3.82205583881773*^9}, {
+   3.822055922563816*^9, 3.822055953140139*^9}, 3.822056050905342*^9, {
+   3.8220563496870832`*^9, 3.822056385721534*^9}, {3.822056431577112*^9, 
+   3.822056446380663*^9}, {3.822057062531823*^9, 3.822057062607777*^9}, {
+   3.822057150248411*^9, 3.822057185381825*^9}, {3.8220572305630407`*^9, 
+   3.8220572538262453`*^9}, {3.8220573268648577`*^9, 3.822057330149744*^9}, {
+   3.822059169966443*^9, 3.822059192658882*^9}, {3.822060268060506*^9, 
+   3.822060268743394*^9}, {3.8220604482258167`*^9, 
+   3.82206045010538*^9}},ExpressionUUID->"8fdccece-db1d-4189-abfd-\
 40a07c2500b5"],
-
-Cell[BoxData["\<\"Loading KnotTheory` version of September 6, 2014, \
-13:37:37.2841.\\nRead more at http://katlas.org/wiki/KnotTheory.\"\>"], \
-"Print",
- CellChangeTimes->{
-  3.8135909221028557`*^9, {3.813591186682064*^9, 3.813591211350275*^9}, {
-   3.8135925938847303`*^9, 3.813592625274695*^9}, {3.813592698274523*^9, 
-   3.813592707916535*^9}, 3.813592757983445*^9, 3.813592875022887*^9, {
-   3.8139478113885*^9, 3.813947831267569*^9}, 3.813947992247142*^9, {
-   3.813948023801935*^9, 3.813948034135347*^9}, 3.813949288146645*^9},
- CellLabel->
-  "During evaluation of \
-In[1]:=",ExpressionUUID->"8093f0d9-bf1b-46bd-889b-201c2d0ac72d"]
-}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1206,9 +1224,12 @@ ML/jones-polynomial-generative-ml/GAN Invariant Verification\>\"", "]"}],
  RowBox[{
   RowBox[{"fileName", "=", "\"\<oct19Jones.csv\>\""}], 
   ";"}], "\[IndentingNewLine]", 
- RowBox[{"insertActualInvariants", "[", "fileName", "]"}]}], "Input",
- CellChangeTimes->{{3.813590896073979*^9, 3.813590917474522*^9}},
- CellLabel->"In[17]:=",ExpressionUUID->"ec8a4f19-d03b-4d66-a080-05764a490682"],
+ RowBox[{"insertActualInvariants", "[", 
+  RowBox[{"fileName", ",", "40"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.813590896073979*^9, 3.813590917474522*^9}, {
+  3.8220602457456217`*^9, 
+  3.822060252988661*^9}},ExpressionUUID->"ec8a4f19-d03b-4d66-a080-\
+05764a490682"],
 
 Cell[BoxData["\<\"oct19Jones_with_invariants.TSV\"\>"], "Output",
  CellChangeTimes->{3.813590953045295*^9, 3.813591245090777*^9, 
@@ -1219,7 +1240,7 @@ Cell[BoxData["\<\"oct19Jones_with_invariants.TSV\"\>"], "Output",
 }, Open  ]]
 },
 WindowSize->{1632, 967},
-WindowMargins->{{46, Automatic}, {Automatic, 1}},
+WindowMargins->{{Automatic, 0}, {Automatic, 0}},
 Magnification:>1.25 Inherited,
 FrontEndVersion->"12.0 for Mac OS X x86 (64-bit) (April 8, 2019)",
 StyleDefinitions->"Default.nb"
@@ -1236,12 +1257,13 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[422, 15, 49229, 1165, 4978, "Input",ExpressionUUID->"8fdccece-db1d-4189-abfd-40a07c2500b5"],
-Cell[49654, 1182, 637, 11, 54, "Print",ExpressionUUID->"8093f0d9-bf1b-46bd-889b-201c2d0ac72d"]
+Cell[422, 15, 133, 2, 37, "Input",ExpressionUUID->"8329f3ee-e492-43e2-9659-14304a29f911"],
+Cell[558, 19, 298, 6, 54, "Print",ExpressionUUID->"cb45928e-2ce6-40d4-9211-021ec6f3b1b0"]
 }, Open  ]],
+Cell[871, 28, 50631, 1184, 5004, "Input",ExpressionUUID->"8fdccece-db1d-4189-abfd-40a07c2500b5"],
 Cell[CellGroupData[{
-Cell[50328, 1198, 544, 12, 90, "Input",ExpressionUUID->"ec8a4f19-d03b-4d66-a080-05764a490682"],
-Cell[50875, 1212, 373, 5, 42, "Output",ExpressionUUID->"a8c9c0a4-d26b-4c01-a542-e237ef22a42f"]
+Cell[51527, 1216, 600, 15, 90, "Input",ExpressionUUID->"ec8a4f19-d03b-4d66-a080-05764a490682"],
+Cell[52130, 1233, 373, 5, 42, "Output",ExpressionUUID->"a8c9c0a4-d26b-4c01-a542-e237ef22a42f"]
 }, Open  ]]
 }
 ]
