@@ -52,7 +52,7 @@ removePDKinks[codePD_] :=
    finalPD = codePD;
    n = Length[finalPD];
    jjj = 1;
-   While[jjj <= n,
+   While[jjj <= n && Length[finalPD] >= 3, 
     If[Length[DeleteDuplicates[finalPD[[jjj]]]] < 4,
      elements = DeleteDuplicates[finalPD[[jjj]]];
      a = DeleteDuplicates[finalPD[[jjj]]][[1]];
@@ -71,14 +71,16 @@ removePDKinks[codePD_] :=
      n--,
      jjj++
      ]];
-   finalPD];
-
+     If[Length[finalPD] <= 2, Return[{}]];
+     finalPD];
+   
 removeAllR1[pdCode_] := Module[{finalPD, n},
    finalPD = pdCode;
    n = Length[finalPD] + 1;
-   While[Length[finalPD] < n,
+   While[Length[finalPD] < n && Length[finalPD] >= 3, 
     n = Length[finalPD];
     finalPD = removePDKinks[finalPD]];
+   If[Length[finalPD] <= 2, Return[{}]];
    finalPD];
 
 removeR2[codePD_] := 
@@ -86,6 +88,7 @@ removeR2[codePD_] :=
     overStrand, r2Removed},
    If[Length[codePD] <= 2, Return[{}]];
    finalPD = removeAllR1[codePD];
+   If[Length[finalPD] <= 2, Return[{}]];
    n = Length[finalPD];
    jjj = 1;
    While[jjj <= n,
@@ -121,8 +124,10 @@ removeR2[codePD_] :=
             biggerThan[finalPD[[kkk, mmm]], elements]]]
         , {mmm, 1, Length[finalPD[[kkk]]]}]
        , {kkk, 1, Length[finalPD]}];
-      removeAllR1[finalPD];
-      n -= Length[finalPD];
+      If[Length[finalPD] <= 2, Return[{}]];
+      finalPD = removeAllR1[finalPD];
+      If[Length[finalPD] <= 2, Return[{}]];
+      n = Length[finalPD];
       jjj = 1;
       iii = jjj + 1,
       iii++
@@ -146,7 +151,7 @@ permutationToPD[floatPermutation_] :=
     preCrossingSubList, mainPair, secondaryPair, key, reverseKey, 
     crossingList, preCrossingList, preCrossInfo, w, preCrossCopy, n},
    If[Mod[Length[floatPermutation], 2] != 1, 
-    Print["The length of the permutation should be odd."]; 
+    Print["The length of the permutation should be odd."];
     Return[4]];
    permutation = intList[floatPermutation];
    permutation = petalToStem[permutation];
@@ -258,22 +263,21 @@ outputFileName = fileName;
 
 WriteLine[outputFileName, newHeader];
 
-n = 10;
+n = 50000;
 Table[PDCode = Table[-1, {jjj, 1, 61}];
-  While[Length[PDCode] > 40, 
-   Check[halfPetalNumber = RandomInteger[{7, 18}];
-    petalPermutation = 
-     RandomVariate[NormalDistribution[0, 1], 2*halfPetalNumber + 1];
-    PDCode = permutationToPD[petalPermutation];
-    If[Length[PDCode] <= 2, 
-     PDCode = {{8, 3, 1, 4}, {7, 5, 8, 4}, {5, 2, 6, 3}, {6, 2, 7, 
-        1}}], Print["Failed at step 1 on petal permutation ", 
-     petalPermutation]]];
-  Check[petalString = 
-    StringReplace[
-     ToString[petalPermutation], {"{" -> "[", "}" -> "]"}];
-   PDString = 
-    StringReplace[ToString[PDCode], {"{" -> "[", "}" -> "]"}];
+ While[Length[PDCode] > 60,
+  Check[
+   halfPetalNumber = RandomInteger[{10, 20}];
+   petalPermutation = 
+    RandomVariate[NormalDistribution[0, 1], 2*halfPetalNumber + 1];
+   PDCode = permutationToPD[petalPermutation];
+   If[Length[PDCode]<=2, 
+     PDCode = {{8, 3, 1, 4}, {7, 5, 8, 4}, {5, 2, 6, 3}, {6, 2, 7, 1}}],
+   Print["Failed at step 1 on petal permutation ", petalPermutation]]];
+ Check[
+  petalString = 
+    StringReplace[ToString[petalPermutation], {"{" -> "[", "}" -> "]"}];
+  PDString = StringReplace[ToString[PDCode], {"{" -> "[", "}" -> "]"}];
    khovanovHomology = Kh[PD @@ (X @@@ PDCode)][q, t]; 
    khovanovPolynomial = Sort[coeffTriples[khovanovHomology, q, t]]; 
    jonesPolynomial = 
@@ -303,10 +307,11 @@ Table[PDCode = Table[-1, {jjj, 1, 61}];
      ",", "\"", jonesSpan, "\"", ",", "\"", alexanderString, "\"", 
      ",", "\"", alexanderSpan, "\"", ",", "\"", signature, "\"", ",", 
      "\"", determinant, "\""];
-   WriteLine[outputFileName, newLineTemp], 
+   WriteLine[outputFileName, newLineTemp],
    Print["Failed at step 2 on petal permutation ", 
     petalPermutation]];
-  If[Mod[iii, 100] == 0, Print["Finished ", iii, " knots."]], {iii, 1,
-    n}];
+  If[Mod[iii, 100] == 0, Print["Finished ", iii, " knots."]], 
+{iii, 1, n}];
+
 Print["Finished creating ", fileName, "!"];
 RenameFile[fileName, StringJoin["finished_", fileName]];

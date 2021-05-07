@@ -47,50 +47,47 @@ biggerThan[value_, comparisonList_] := Module[{totalList},
    Position[totalList, value][[1, 1]] - 1];
 
 removePDKinks[codePD_] := 
-  Module[{PD1, finalPD, elements, a, b, c, n, jjj},
+  Module[{PD1, finalPD, elements, a, b, c, n, jjj}, 
    If[Length[codePD] <= 2, Return[{}]];
    finalPD = codePD;
    n = Length[finalPD];
    jjj = 1;
-   While[jjj <= n,
-    If[Length[DeleteDuplicates[finalPD[[jjj]]]] < 4,
+   While[jjj <= n && Length[finalPD] >= 3, 
+    If[Length[DeleteDuplicates[finalPD[[jjj]]]] < 4, 
      elements = DeleteDuplicates[finalPD[[jjj]]];
      a = DeleteDuplicates[finalPD[[jjj]]][[1]];
      b = DeleteDuplicates[finalPD[[jjj]]][[2]];
      c = DeleteDuplicates[finalPD[[jjj]]][[3]];
      finalPD = DeleteCases[finalPD, finalPD[[jjj]]];
      Table[
-      Table[
-       If[MemberQ[elements, finalPD[[iii, mmm]]],
-        finalPD[[iii, mmm]] = Min[elements],
+      Table[If[MemberQ[elements, finalPD[[iii, mmm]]], 
+        finalPD[[iii, mmm]] = Min[elements], 
         finalPD[[iii, mmm]] = 
          finalPD[[iii, mmm]] + 
-          Min[0, -biggerThan[finalPD[[iii, mmm]], elements] + 1]]
-       , {mmm, 1, Length[finalPD[[iii]]]}]
-      , {iii, 1, Length[finalPD]}];
-     n--,
-     jjj++
-     ]];
+          Min[0, -biggerThan[finalPD[[iii, mmm]], elements] + 
+            1]], {mmm, 1, Length[finalPD[[iii]]]}], {iii, 1, 
+       Length[finalPD]}];
+     n--, jjj++]];
+   If[Length[finalPD] <= 2, Return[{}]];
    finalPD];
-
-removeAllR1[pdCode_] := Module[{finalPD, n},
-   finalPD = pdCode;
+   
+removeAllR1[pdCode_] := Module[{finalPD, n}, finalPD = pdCode;
    n = Length[finalPD] + 1;
-   While[Length[finalPD] < n,
+   While[Length[finalPD] < n && Length[finalPD] >= 3, 
     n = Length[finalPD];
     finalPD = removePDKinks[finalPD]];
+   If[Length[finalPD] <= 2, Return[{}]];
    finalPD];
 
 removeR2[codePD_] := 
   Module[{PD1, finalPD, jjj, iii, n, elements, underStrand, 
-    overStrand, r2Removed},
-   If[Length[codePD] <= 2, Return[{}]];
+    overStrand, r2Removed}, If[Length[codePD] <= 2, Return[{}]];
    finalPD = removeAllR1[codePD];
+   If[Length[finalPD] <= 2, Return[{}]];
    n = Length[finalPD];
    jjj = 1;
-   While[jjj <= n,
-    iii = jjj + 1;
-    While[iii <= n,
+   While[jjj <= n, iii = jjj + 1;
+    While[iii <= n, 
      If[Length[Intersection[finalPD[[iii]], finalPD[[jjj]]]] >= 
         2 && (finalPD[[iii, 1]] == finalPD[[jjj, 3]] || 
          finalPD[[iii, 3]] == finalPD[[jjj, 1]]),
@@ -107,46 +104,39 @@ removeR2[codePD_] :=
       finalPD = DeleteCases[finalPD, finalPD[[iii]]];
       finalPD = DeleteCases[finalPD, finalPD[[jjj]]];
       Table[
-       Table[
-        If[MemberQ[overStrand, finalPD[[kkk, mmm]]],
+       Table[If[MemberQ[overStrand, finalPD[[kkk, mmm]]], 
          finalPD[[kkk, mmm]] = 
           Min[overStrand] + 
-           Min[0, -biggerThan[Min[overStrand], underStrand] + 1],
-         If[MemberQ[underStrand, finalPD[[kkk, mmm]]],
+           Min[0, -biggerThan[Min[overStrand], underStrand] + 1], 
+         If[MemberQ[underStrand, finalPD[[kkk, mmm]]], 
           finalPD[[kkk, mmm]] = 
            Min[underStrand] + 
-            Min[0, -biggerThan[Min[underStrand], overStrand] + 1],
+            Min[0, -biggerThan[Min[underStrand], overStrand] + 1], 
           finalPD[[kkk, mmm]] = 
            finalPD[[kkk, mmm]] - 
-            biggerThan[finalPD[[kkk, mmm]], elements]]]
-        , {mmm, 1, Length[finalPD[[kkk]]]}]
-       , {kkk, 1, Length[finalPD]}];
-      removeAllR1[finalPD];
-      n -= Length[finalPD];
+            biggerThan[finalPD[[kkk, mmm]], elements]]], {mmm, 1, 
+         Length[finalPD[[kkk]]]}], {kkk, 1, Length[finalPD]}];
+      If[Length[finalPD] <= 2, Return[{}]];
+      finalPD = removeAllR1[finalPD];
+      If[Length[finalPD] <= 2, Return[{}]];
+      n = Length[finalPD];
       jjj = 1;
-      iii = jjj + 1,
-      iii++
-      ]
-     ];
-    jjj++
-    ];
+      iii = jjj + 1, iii++]];
+    jjj++];
    finalPD];
 
-simplifyPDCode[pdCode_] := Module[{finalPD, n},
-   finalPD = pdCode;
+simplifyPDCode[pdCode_] := Module[{finalPD, n}, finalPD = pdCode;
    n = Length[finalPD] + 1;
-   While[Length[finalPD] < n,
-    n = Length[finalPD];
-    (*finalPD=removeAllR1[finalPD];*)
-    finalPD = removeR2[finalPD]];
+   While[Length[finalPD] < n, n = Length[finalPD];
+    (*finalPD=removeAllR1[finalPD];*)finalPD = removeR2[finalPD]];
    finalPD];
 
 permutationToPD[floatPermutation_] := 
   Module[{permutation, crossingCounter, sideCounter, 
     preCrossingSubList, mainPair, secondaryPair, key, reverseKey, 
-    crossingList, preCrossingList, preCrossInfo, w, preCrossCopy, n},
+    crossingList, preCrossingList, preCrossInfo, w, preCrossCopy, n}, 
    If[Mod[Length[floatPermutation], 2] != 1, 
-    Print["The length of the permutation should be odd."]; 
+    Print["The length of the permutation should be odd."];
     Return[4]];
    permutation = intList[floatPermutation];
    permutation = petalToStem[permutation];
@@ -155,8 +145,7 @@ permutationToPD[floatPermutation_] :=
    crossingList = <||>;
    crossingCounter = 1;
    sideCounter = 0;
-   Table[
-    preCrossingSubList = {};
+   Table[preCrossingSubList = {};
     mainPair = {permutation[[jjj + 1]], 
       permutation[[Mod[jjj + 1, n] + 1]]};
     Table[
@@ -165,33 +154,27 @@ permutationToPD[floatPermutation_] :=
      If[(mainPair[[1]] - secondaryPair[[1]])*(mainPair[[2]] - 
           secondaryPair[[1]])*(mainPair[[1]] - 
           secondaryPair[[2]])*(mainPair[[2]] - secondaryPair[[2]]) <= 
-       0,
-      key = Join[mainPair, secondaryPair];
+       0, key = Join[mainPair, secondaryPair];
       reverseKey = Join[secondaryPair, mainPair];
-      If[Not[KeyExistsQ[crossingList, reverseKey]],
+      If[Not[KeyExistsQ[crossingList, reverseKey]], 
        crossingList[key] = {sideCounter}];
       preCrossingSubList = 
-       Join[preCrossingSubList, {Join[mainPair, secondaryPair]}]
-      ],
-     {iii, 0, n/2 - 2}];
+       Join[preCrossingSubList, {Join[mainPair, 
+          secondaryPair]}]], {iii, 0, n/2 - 2}];
     preCrossingSubList = 
      Sort[preCrossingSubList, 
       preCrossingOrderValue[#1] < preCrossingOrderValue[#2] &];
     preCrossingList = Join[preCrossingList, preCrossingSubList];
-    sideCounter = Mod[sideCounter + 1, 2],
-    {jjj, 0, n - 1}];
-   Table[
-    key = preCross;
+    sideCounter = Mod[sideCounter + 1, 2], {jjj, 0, n - 1}];
+   Table[key = preCross;
     reverseKey = Join[preCross[[{3, 4}]], preCross[[{1, 2}]]];
-    If[KeyExistsQ[crossingList, key],
-     crossingList[key] = Append[crossingList[key], crossingCounter],
+    If[KeyExistsQ[crossingList, key], 
+     crossingList[key] = Append[crossingList[key], crossingCounter], 
      crossingList[reverseKey] = 
       Append[crossingList[reverseKey], crossingCounter]];
-    crossingCounter++,
-    {preCross, preCrossingList}];
+    crossingCounter++, {preCross, preCrossingList}];
    preCrossingList = Keys[crossingList];
-   Table[
-    key = preCrossingList[[jjj]];
+   Table[key = preCrossingList[[jjj]];
     preCrossInfo = crossingList[key];
     w = Sign[(preCrossingList[[jjj, 2]] - 
           preCrossingList[[jjj, 1]])*(preCrossingList[[jjj, 4]] - 
@@ -206,18 +189,16 @@ permutationToPD[floatPermutation_] :=
      Max[Mod[preCrossInfo[[3]], crossingCounter], 1];
     preCrossingList[[jjj, 4]] = 
      Max[Mod[preCrossInfo[[3]] + 1, crossingCounter], 1];
-    If[preCrossInfo[[1]] == 0,
-     preCrossCopy = preCrossingList[[jjj]];
+    If[preCrossInfo[[1]] == 0, preCrossCopy = preCrossingList[[jjj]];
      preCrossingList[[jjj, 3]] = preCrossCopy[[2]];
      preCrossingList[[jjj, Mod[1 + w, 4] + 1]] = preCrossCopy[[3]];
-     preCrossingList[[jjj, Mod[3 - w, 4] + 1]] = preCrossCopy[[4]],
+     preCrossingList[[jjj, Mod[3 - w, 4] + 1]] = preCrossCopy[[4]], 
      preCrossCopy = preCrossingList[[jjj]];
      preCrossingList[[jjj, 1]] = preCrossCopy[[3]];
      preCrossingList[[jjj, 3]] = preCrossCopy[[4]];
      preCrossingList[[jjj, Mod[1 + w, 4] + 1]] = preCrossCopy[[1]];
-     preCrossingList[[jjj, Mod[3 - w, 4] + 1]] = preCrossCopy[[2]]
-     ],
-    {jjj, 1, Length[preCrossingList]}];
+     preCrossingList[[jjj, Mod[3 - w, 4] + 1]] = 
+      preCrossCopy[[2]]], {jjj, 1, Length[preCrossingList]}];
    simplifyPDCode[preCrossingList]];
    
 
@@ -240,7 +221,7 @@ outputFileName = fileName;
 
 WriteLine[outputFileName, newHeader];
 
-n = 10000;
+n = 50000;
   Table[PDCode = Table[-1, {jjj, 1, 61}];
  While[Length[PDCode] > 60,
   Check[
@@ -248,7 +229,7 @@ n = 10000;
    petalPermutation = 
     RandomVariate[NormalDistribution[0, 1], 2*halfPetalNumber + 1];
    PDCode = permutationToPD[petalPermutation];
-   If[PDCode == {}, PDCode = {{8, 3, 1, 4}, {7, 5, 8, 4}, {5, 2, 6, 3}, {6, 2, 7, 1}}],
+   If[Length[PDCode]<=2, PDCode = {{8, 3, 1, 4}, {7, 5, 8, 4}, {5, 2, 6, 3}, {6, 2, 7, 1}}],
    Print["Failed at step 1 on petal permutation ", petalPermutation]]];
  Check[
   petalString = 
