@@ -265,7 +265,7 @@ WriteLine[outputFileName, newHeader];
 
 n = 50000;
 Table[PDCode = Table[-1, {jjj, 1, 61}];
- While[Length[PDCode] > 60,
+ While[Length[PDCode] > 40,
   Check[
    halfPetalNumber = RandomInteger[{10, 20}];
    petalPermutation = 
