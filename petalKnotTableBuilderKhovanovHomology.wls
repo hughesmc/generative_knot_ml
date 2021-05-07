@@ -231,8 +231,26 @@ fileName =
 
 coeffPairs[pol_, x_Symbol] := {#, Coefficient[pol, x, #]} & /@ 
    Exponent[pol, x, List];
+   
+   
+coeffTriples[pol_, x_Symbol, y_Symbol] := 
+ Module[{exponents1, exponents2, exponentPairs, coefficientTriples},
+  exponents1 = Exponent[pol, x, List];
+  exponents2 = Exponent[pol, y, List];
+  exponentPairs = Tuples[{exponents1, exponents2}];
+  coefficientTriples = 
+   Table[{exponentPairs[[jjj, 1]], exponentPairs[[jjj, 2]], 
+     Coefficient[Coefficient[pol, y, exponentPairs[[jjj, 2]]], x, 
+      exponentPairs[[jjj, 1]]]},
+    {jjj, 1, Length[exponentPairs]}];
+  coefficientTriples = 
+   Sort[DeleteCases[coefficientTriples, {_, _, 0}]];
+  coefficientTriples];   
+   
+
 newHeader = 
-  StringJoin["permutation", ",", "PD_code", ",", "Jones_polynomial", 
+  StringJoin["permutation", ",", "PD_code", ",", "Khovanov_polynomial", 
+   ",","Jones_polynomial", 
    ",", "Jones_polynomial_span", ",", "Alexander_polynomial", ",", 
    "Alexander_polynomial_span", ",", "Signature", ",", 
    "Determinant"];
@@ -240,50 +258,55 @@ outputFileName = fileName;
 
 WriteLine[outputFileName, newHeader];
 
-n = 10000;
-  Table[PDCode = Table[-1, {jjj, 1, 61}];
- While[Length[PDCode] > 60,
-  Check[
-   halfPetalNumber = RandomInteger[{10, 20}];
-   petalPermutation = 
-    RandomVariate[NormalDistribution[0, 1], 2*halfPetalNumber + 1];
-   PDCode = permutationToPD[petalPermutation];
-   If[PDCode == {}, PDCode = {{8, 3, 1, 4}, {7, 5, 8, 4}, {5, 2, 6, 3}, {6, 2, 7, 1}}],
-   Print["Failed at step 1 on petal permutation ", petalPermutation]]];
- Check[
-  petalString = 
-   StringReplace[ToString[petalPermutation], {"{" -> "[", "}" -> "]"}];
-  PDString = StringReplace[ToString[PDCode], {"{" -> "[", "}" -> "]"}];
-  jonesPolynomial = 
-   Sort[coeffPairs[Jones[PD @@ (X @@@ PDCode)][q], 
-     q], #1[[1]] < #2[[1]] &];
-  jonesSpan = 
-   ToString[jonesPolynomial[[-1, 1]] - jonesPolynomial[[1, 1]]];
-  jonesString = 
-   StringReplace[
-    ToString[jonesPolynomial], {"{" -> "[", "}" -> "]"}];
-  alexanderPolynomial = 
-   Sort[coeffPairs[Alexander[PD @@ (X @@@ PDCode)][q], 
-     q], #1[[1]] < #2[[1]] &];
-  alexanderSpan = 
-   ToString[
-    alexanderPolynomial[[-1, 1]] - alexanderPolynomial[[1, 1]]];
-  alexanderString = 
-   StringReplace[
-    ToString[alexanderPolynomial], {"{" -> "[", "}" -> "]"}];
-  signature = ToString[KnotSignature[PD @@ (X @@@ PDCode)]];
-  determinant = ToString[KnotDet[PD @@ (X @@@ PDCode)]];
-  newLineTemp = 
-   StringJoin["\"", petalString, "\"", ",", "\"", PDString, "\"", ",",
-     "\"", jonesString, "\"", ",", "\"", jonesSpan, "\"", ",", "\"", 
-    alexanderString, "\"", ",", "\"", alexanderSpan, "\"", ",", "\"", 
-    signature, "\"", ",", "\"", determinant, "\""];
-  WriteLine[outputFileName, newLineTemp],
-  Print["Failed at step 2 on petal permutation ", petalPermutation]];
- If[Mod[iii, 100] == 0, Print["Finished ", iii, " knots."]], {iii, 1, 
-  n}];
-
+n = 10;
+Table[PDCode = Table[-1, {jjj, 1, 61}];
+  While[Length[PDCode] > 40, 
+   Check[halfPetalNumber = RandomInteger[{7, 18}];
+    petalPermutation = 
+     RandomVariate[NormalDistribution[0, 1], 2*halfPetalNumber + 1];
+    PDCode = permutationToPD[petalPermutation];
+    If[Length[PDCode] <= 2, 
+     PDCode = {{8, 3, 1, 4}, {7, 5, 8, 4}, {5, 2, 6, 3}, {6, 2, 7, 
+        1}}], Print["Failed at step 1 on petal permutation ", 
+     petalPermutation]]];
+  Check[petalString = 
+    StringReplace[
+     ToString[petalPermutation], {"{" -> "[", "}" -> "]"}];
+   PDString = 
+    StringReplace[ToString[PDCode], {"{" -> "[", "}" -> "]"}];
+   khovanovHomology = Kh[PD @@ (X @@@ PDCode)][q, t]; 
+   khovanovPolynomial = Sort[coeffTriples[khovanovHomology, q, t]]; 
+   jonesPolynomial = 
+    Sort[coeffPairs[
+      Simplify[Factor[khovanovHomology /. t -> -1]/(q + q^(-1))] /.q -> q^(1/2), q], #1[[1]] < #2[[1]] &];
+   khovanovString = 
+    StringReplace[
+     ToString[khovanovPolynomial], {"{" -> "[", "}" -> "]"}];
+   jonesSpan = 
+    ToString[jonesPolynomial[[-1, 1]] - jonesPolynomial[[1, 1]]];
+   jonesString = 
+    StringReplace[ToString[jonesPolynomial], {"{" -> "[", "}" -> "]"}];
+   alexanderPolynomial = 
+    Sort[coeffPairs[Alexander[PD @@ (X @@@ PDCode)][q], 
+      q], #1[[1]] < #2[[1]] &];
+   alexanderSpan = 
+    ToString[
+     alexanderPolynomial[[-1, 1]] - alexanderPolynomial[[1, 1]]];
+   alexanderString = 
+    StringReplace[
+     ToString[alexanderPolynomial], {"{" -> "[", "}" -> "]"}];
+   signature = ToString[KnotSignature[PD @@ (X @@@ PDCode)]];
+   determinant = ToString[KnotDet[PD @@ (X @@@ PDCode)]];
+   newLineTemp = 
+    StringJoin["\"", petalString, "\"", ",", "\"", PDString, "\"", 
+     ",", "\"", khovanovString, "\"", ",", "\"", jonesString, "\"", 
+     ",", "\"", jonesSpan, "\"", ",", "\"", alexanderString, "\"", 
+     ",", "\"", alexanderSpan, "\"", ",", "\"", signature, "\"", ",", 
+     "\"", determinant, "\""];
+   WriteLine[outputFileName, newLineTemp], 
+   Print["Failed at step 2 on petal permutation ", 
+    petalPermutation]];
+  If[Mod[iii, 100] == 0, Print["Finished ", iii, " knots."]], {iii, 1,
+    n}];
 Print["Finished creating ", fileName, "!"];
-RenameFile[
-  fileName, 
-  StringJoin["finished_", fileName]];
+RenameFile[fileName, StringJoin["finished_", fileName]];
