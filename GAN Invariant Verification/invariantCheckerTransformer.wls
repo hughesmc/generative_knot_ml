@@ -219,7 +219,7 @@ convertExponents[string_] := Module[{stringTemp},
    ];
 
 convertStringList[stringList_] := Module[{},
-   list = StringSplit[StringDelete[stringList, {"{", "}"}], ","];
+   list = StringSplit[StringDelete[stringList, {"[","]","{", "}"}], ","];
    Thread[convertExponents[list]]];
 
 coeffPairs[pol_, x_Symbol] := {#, Coefficient[pol, x, #]} & /@ 
