@@ -52,7 +52,7 @@ removePDKinks[codePD_] :=
    finalPD = codePD;
    n = Length[finalPD];
    jjj = 1;
-   While[jjj <= n,
+   While[jjj <= n && Length[finalPD] >= 3, 
     If[Length[DeleteDuplicates[finalPD[[jjj]]]] < 4,
      elements = DeleteDuplicates[finalPD[[jjj]]];
      a = DeleteDuplicates[finalPD[[jjj]]][[1]];
@@ -71,13 +71,24 @@ removePDKinks[codePD_] :=
      n--,
      jjj++
      ]];
+     If[Length[finalPD] <= 2, Return[{}]];
+     finalPD];
+   
+removeAllR1[pdCode_] := Module[{finalPD, n},
+   finalPD = pdCode;
+   n = Length[finalPD] + 1;
+   While[Length[finalPD] < n && Length[finalPD] >= 3, 
+    n = Length[finalPD];
+    finalPD = removePDKinks[finalPD]];
+   If[Length[finalPD] <= 2, Return[{}]];
    finalPD];
 
 removeR2[codePD_] := 
   Module[{PD1, finalPD, jjj, iii, n, elements, underStrand, 
-    overStrand},
+    overStrand, r2Removed},
    If[Length[codePD] <= 2, Return[{}]];
-   finalPD = codePD;
+   finalPD = removeAllR1[codePD];
+   If[Length[finalPD] <= 2, Return[{}]];
    n = Length[finalPD];
    jjj = 1;
    While[jjj <= n,
@@ -105,17 +116,19 @@ removeR2[codePD_] :=
           Min[overStrand] + 
            Min[0, -biggerThan[Min[overStrand], underStrand] + 1],
          If[MemberQ[underStrand, finalPD[[kkk, mmm]]],
-          
           finalPD[[kkk, mmm]] = 
            Min[underStrand] + 
             Min[0, -biggerThan[Min[underStrand], overStrand] + 1],
-          
           finalPD[[kkk, mmm]] = 
            finalPD[[kkk, mmm]] - 
             biggerThan[finalPD[[kkk, mmm]], elements]]]
         , {mmm, 1, Length[finalPD[[kkk]]]}]
        , {kkk, 1, Length[finalPD]}];
-      n -= 2;
+      If[Length[finalPD] <= 2, Return[{}]];
+      finalPD = removeAllR1[finalPD];
+      If[Length[finalPD] <= 2, Return[{}]];
+      n = Length[finalPD];
+      jjj = 1;
       iii = jjj + 1,
       iii++
       ]
@@ -129,7 +142,7 @@ simplifyPDCode[pdCode_] := Module[{finalPD, n},
    n = Length[finalPD] + 1;
    While[Length[finalPD] < n,
     n = Length[finalPD];
-    finalPD = removePDKinks[finalPD];
+    (*finalPD=removeAllR1[finalPD];*)
     finalPD = removeR2[finalPD]];
    finalPD];
 
@@ -138,7 +151,7 @@ permutationToPD[floatPermutation_] :=
     preCrossingSubList, mainPair, secondaryPair, key, reverseKey, 
     crossingList, preCrossingList, preCrossInfo, w, preCrossCopy, n},
    If[Mod[Length[floatPermutation], 2] != 1, 
-    Print["The length of the permutation should be odd."]; 
+    Print["The length of the permutation should be odd."];
     Return[4]];
    permutation = intList[floatPermutation];
    permutation = petalToStem[permutation];
