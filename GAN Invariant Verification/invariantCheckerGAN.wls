@@ -249,9 +249,9 @@ If[Length[$ScriptCommandLine] >= 3,
 
 insertActualInvariants[fileName_, maxPDLength_: 60] := Module[{},
    file = Import[fileName];
-   header = {"Petal permutation", "Actual invariants"};
+   header = {"Input invariants","Petal permutation", "Actual invariants"};
    Table[
-    petalPermutation[iii] = convertStringList[file[[iii, 1]]];
+    petalPermutation[iii] = convertStringList[file[[iii, 2]]];
     PDCode[iii] = permutationToPD[petalPermutation[iii]];
     If[PDCode[iii] == {}, 
      PDCode[iii] = {{8, 3, 1, 4}, {7, 5, 8, 4}, {5, 2, 6, 3}, {6, 2, 
