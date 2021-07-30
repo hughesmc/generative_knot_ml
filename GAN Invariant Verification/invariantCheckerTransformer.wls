@@ -246,9 +246,23 @@ If[Length[$ScriptCommandLine] >= 3,
   inputMaxPDCode = ToExpression[$ScriptCommandLine[[3]]], 
   inputMaxPDCode = 40];
 
+If[Length[$ScriptCommandLine] >= 4, 
+  inputMinPDCode = ToExpression[$ScriptCommandLine[[4]]], 
+  inputMinPDCode = -1];
+  
+If[Length[$ScriptCommandLine] >= 5, 
+  inputStartIndex = ToExpression[$ScriptCommandLine[[5]]], 
+  inputStartIndex = 1];
+  
+If[Length[$ScriptCommandLine] >= 6, 
+  inputEndIndex = ToExpression[$ScriptCommandLine[[6]]], 
+  inputEndIndex = -1];
 
-insertActualInvariants[fileName_, maxPDLength_: 60] := Module[{},
+
+
+insertActualInvariants[fileName_, maxPDLength_: 60, minPDLength_: 0, startIndex_: 1, endIndex_: -1] := Module[{petalPermutation,PDCode,header,jonesPolynomial,jonesSpan,jonesString,alexanderPolynomial,alexanderSpan,alexanderString,signature,determinant,actualInvariants,file},
    file = Import[fileName];
+   If[endIndex==-1,newEndIndex=Length[file],newEndIndex=endIndex];
    header = {"Petal permutation", "Actual invariants"};
    Table[
     petalPermutation[iii] = convertStringList[file[[iii, 1]]];
@@ -257,7 +271,7 @@ insertActualInvariants[fileName_, maxPDLength_: 60] := Module[{},
      PDCode[iii] = {{8, 3, 1, 4}, {7, 5, 8, 4}, {5, 2, 6, 3}, {6, 2, 
         7, 1}}];
     If[
-     Length[PDCode[iii]] <= maxPDLength,
+     (Length[PDCode[iii]] <= maxPDLength)&&(Length[PDCode[iii]] >= minPDLength),
      jonesPolynomial[iii] = 
       Sort[coeffPairs[Jones[PD @@ (X @@@ PDCode[iii])][q], 
         q], #1[[1]] < #2[[1]] &]; 
@@ -280,13 +294,14 @@ insertActualInvariants[fileName_, maxPDLength_: 60] := Module[{},
      actualInvariants[iii] = {jonesSpan[iii], alexanderSpan[iii], 
        signature[iii], determinant[iii], jonesPolynomial[iii], 
        alexanderPolynomial[iii]},
-     actualInvariants[iii] = {"PD Code longer than maximum"}];
-    AppendTo[file[[iii]], actualInvariants[iii]], {iii, 1, 
-     Length[file]}];
+     actualInvariants[iii] = {"PD Code length is outside the specified range"}];
+    AppendTo[file[[iii]], actualInvariants[iii]], {iii, startIndex, 
+     newEndIndex}];
    newFileName = 
     StringJoin[StringSplit[fileName, "."][[1]], 
-     "_with_invariants.csv"];
-   Export[newFileName, file]];
+     "_with_invariants_MAX",ToString[maxPDLength],"_MIN",ToString[minPDLength],"_START",ToString[startIndex],"_END",ToString[newEndIndex],".csv"];
+   newFile=Table[file[[jjj]],{jjj,startIndex,newEndIndex}];
+   Export[newFileName, newFile]];
    
    
-   insertActualInvariants[fileName, inputMaxPDCode]
+insertActualInvariants[fileName, inputMaxPDCode, inputMinPDCode, inputStartIndex, inputEndIndex]
