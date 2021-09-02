@@ -260,8 +260,9 @@ If[Length[$ScriptCommandLine] >= 6,
 
 
 
-insertActualInvariants[fileName_, maxPDLength_: 60, minPDLength_: 0, startIndex_: 1, endIndex_: -1] := Module[{petalPermutation,PDCode,header,jonesPolynomial,jonesSpan,jonesString,alexanderPolynomial,alexanderSpan,alexanderString,signature,determinant,actualInvariants,file},
+insertActualInvariants[fileName_, maxPDLength_: 60, minPDLength_: 0, startIndex_: 1, endIndex_: -1] := Module[{newEndIndex,newStartIndex,petalPermutation,PDCode,header,jonesPolynomial,jonesSpan,jonesString,alexanderPolynomial,alexanderSpan,alexanderString,signature,determinant,actualInvariants,file},
    file = Import[fileName];
+   newStartIndex=Max[startIndex,1];
    If[endIndex==-1,newEndIndex=Length[file],newEndIndex=Min[Length[file],endIndex]];
    header = {"Petal permutation", "Actual invariants"};
    Table[
@@ -295,7 +296,7 @@ insertActualInvariants[fileName_, maxPDLength_: 60, minPDLength_: 0, startIndex_
        signature[iii], determinant[iii], jonesPolynomial[iii], 
        alexanderPolynomial[iii]},
      actualInvariants[iii] = {"PD Code length is outside the specified range"}];
-    AppendTo[file[[iii]], actualInvariants[iii]], {iii, startIndex, 
+    AppendTo[file[[iii]], actualInvariants[iii]], {iii, newStartIndex, 
      newEndIndex}];
    newFileName = 
     StringJoin[StringSplit[fileName, "."][[1]], 
