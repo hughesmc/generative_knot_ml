@@ -262,7 +262,7 @@ If[Length[$ScriptCommandLine] >= 6,
 
 insertActualInvariants[fileName_, maxPDLength_: 60, minPDLength_: 0, startIndex_: 1, endIndex_: -1] := Module[{petalPermutation,PDCode,header,jonesPolynomial,jonesSpan,jonesString,alexanderPolynomial,alexanderSpan,alexanderString,signature,determinant,actualInvariants,file},
    file = Import[fileName];
-   If[endIndex==-1,newEndIndex=Length[file],newEndIndex=endIndex];
+   If[endIndex==-1,newEndIndex=Length[file],newEndIndex=Min[Length[file],endIndex]];
    header = {"Petal permutation", "Actual invariants"};
    Table[
     petalPermutation[iii] = convertStringList[file[[iii, 1]]];
